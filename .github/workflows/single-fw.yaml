@@ -111,4 +111,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: thingino-ahc-3301y-ht1
-          path: ${HOME}/output/ahc-3301y-ht1/images/
+          path: ~/output/ahc-3301y-ht1/images/
