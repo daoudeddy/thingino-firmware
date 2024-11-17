@@ -2,7 +2,7 @@
 PTZ_CONF_FILE="/etc/ptz_presets.conf"
 
 usage() {
-	echo "Usage: $0 [-g] [-a <preset_number> <preset_name> <x_coord> <y_coord>] [-r <preset_number>]"
+	echo "Usage: $0 [-g] [-a <preset_name> <preset_number> <x_coord> <y_coord>] [-r <preset_number>]"
 	echo "  -g: Display all presets"
 	echo "  -a: Add a new preset with number, name, and coordinates"
 	echo "  -r: Remove a preset by number"
@@ -20,11 +20,20 @@ case "$1" in
 		exit 0
 		;;
 	-a)
-		[ $# -ne 5 ] && echo "Error: Missing arguments." && usage
-		PRESET_NUM=$2; PRESET_NAME=$3; PRESET_X=$4; PRESET_Y=$5
+		[ $# -lt 2 ] && echo "Error: Missing arguments." && usage
+		PRESET_NAME=$2; PRESET_NUM=$3; PRESET_X=$4; PRESET_Y=$5
+		if [ -z "$PRESET_NUM" ]; then
+			PRESET_NUM=$(cat "$PTZ_CONF_FILE" | sort -t, -k1 | grep -m1 =,, | cut -c1)
+			[ -z "$PRESET_NUM" ] && exit "No free preset available"
+		fi
+		if [ -z "$PRESET_X" ] || [ -z "$PRESET_Y" ]; then
+			POS=$(motors -p)
+        	        PRESET_X=$(echo $POS | cut -d ',' -f 1)
+	                PRESET_Y=$(echo $POS | cut -d ',' -f 2)
+		fi
 		if grep -q "^$PRESET_NUM=" "$PTZ_CONF_FILE"; then
 			current_preset=$(grep "^$PRESET_NUM=" "$PTZ_CONF_FILE")
-			[ "$current_preset" != "$PRESET_NUM=,," ] && echo "Preset exists. Remove it first to overwrite." && exit 1
+			[ "$current_preset" != "$PRESET_NUM=,," ] && exit "Preset exists. Remove it first to overwrite."
 			sed -i "/^$PRESET_NUM=,,/d" "$PTZ_CONF_FILE"
 		fi
 		echo "$PRESET_NUM=$PRESET_NAME,$PRESET_X,$PRESET_Y" >> "$PTZ_CONF_FILE"
