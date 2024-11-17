@@ -5,11 +5,10 @@
 
 state=${s:-0}
 
-color=$c
-[ -z "$color" ] && json_error "Missing mandatory parameter 'c' for color"
+[ -z "$n" ] && json_error "Required parameter 'n' is not set"
 
-pin=$(fw_printenv -n gpio_led_$color)
-[ -z "$pin" ] && json_error "GPIO is not set for $c LED"
+pin=$(fw_printenv -n $n)
+[ -z "$pin" ] && json_error "GPIO is not found"
 
 # default to output high
 [ "$pin" = "${pin//[^0-9]/}" ] && pin="${pin}O"

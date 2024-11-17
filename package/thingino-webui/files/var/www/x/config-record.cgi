@@ -8,7 +8,7 @@ params="blink debug diskusage duration enabled filename led loop mount videoform
 # constants
 MOUNTS=$(awk '/nfs|fat/{print $2}' /etc/mtab)
 RECORD_CTL="/etc/init.d/S96record"
-RECORD_FILENAME_FB="thingino/%F/%FT%%H%M"
+RECORD_FILENAME_FB="thingino/%F/%FT%H%M"
 config_file="$ui_config_dir/$plugin.conf"
 include $config_file
 
@@ -57,9 +57,9 @@ fi
 %>
 <%in _header.cgi %>
 
-<form action="<%= $SCRIPT_NAME %>" method="post">
+<form action="<%= $SCRIPT_NAME %>" method="post" class="mb-4">
 <% field_switch "record_enabled" "Enable Recording" %>
-<div class="row row-cols-1 row-cols-lg-3 g-4 mb-4">
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3">
 <div class="col">
 <% field_select "record_mount" "Record storage directory" "$MOUNTS" %>
 <div class="row g-1">
@@ -74,13 +74,12 @@ fi
 </div>
 <div class="col">
 <% field_select "record_led" "Indicator LED" "$(fw_printenv | awk -F= '/^gpio_led/{print $1}')" %>
-<% field_range "record_blink" "Blink interval, seconds" "0,3.0,0.5" "Set to 0 for always on"%>
+<% field_range "record_blink" "Blink interval, seconds" "0,3.0,0.5" "Set to 0 for always on" %>
 </div>
 </div>
 <% button_submit %>
 </form>
 
-<br>
 <% if pidof record > /dev/null; then %>
 <h3 class="alert alert-info">Recording in progress.</h3>
 <% else %>
@@ -89,5 +88,10 @@ fi
 <p class="mb-0">Please note. The last active recording will continue until the end of the recording time!</p>
 </div>
 <% fi %>
+
+<div class="alert alert-dark ui-debug">
+<h4 class="mb-3">Debug info</h4>
+<% ex "cat $config_file" %>
+</div>
 
 <%in _footer.cgi %>
