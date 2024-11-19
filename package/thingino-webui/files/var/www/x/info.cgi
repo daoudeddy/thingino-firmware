@@ -16,12 +16,11 @@ name=$QUERY_STRING
 [ -z "$name" ] && redirect_to "$SCRIPT_NAME?system"
 
 case "$name" in
-	dmesg | logcat | logread | lsmod | snmp)
+	dmesg | logcat | logread | lsmod)
 			cmd=$name
 			;;
 	crontab)	cmd="crontab -l"
-			extras="<p><a href=\"https://devhints.io/cron\">Cron syntax cheatsheet</a></p>" \
-				"<p><a class=\"btn btn-warning\" href=\"texteditor.cgi?f=/etc/crontabs/root\">Edit file</a></p>"
+			extras="<p><a href=\"https://devhints.io/cron\">Cron syntax cheatsheet</a></p><p><a class=\"btn btn-warning\" href=\"texteditor.cgi?f=/etc/crontabs/root\">Edit file</a></p>"
 			;;
 	httpd)		cmd="cat /etc/httpd.conf; printenv"
 			extras="$(button_restore_from_rom "/etc/httpd.conf")"
@@ -38,7 +37,7 @@ esac
 <%in _header.cgi %>
 <ul class="nav nav-tabs mb-3">
 <%
-for i in crontab dmesg httpd logcat logread lsmod netstat prudynt snmp status system top weblog; do
+for i in crontab dmesg httpd logcat logread lsmod netstat prudynt status system top weblog; do
 	[ "$name" = "$i" ] && active=" active" || active=""
 	echo "<li class=\"nav-item\"><a class=\"nav-link$active\" href=\"?$i\">$i</a></li>"
 done
