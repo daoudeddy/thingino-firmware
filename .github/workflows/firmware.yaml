@@ -1,8 +1,8 @@
 name: firmware
 on:
   schedule:
-    # 01:15 PST / Nightly
-    - cron:  '15 8 * * *'
+    # 01:30 PST / Nightly
+    - cron:  '30 8 * * *'
   workflow_dispatch:
     inputs:
       tg_disabled:
@@ -75,7 +75,7 @@ jobs:
           echo Telegram response: ${HTTP}
 
   generate-matrix:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -139,13 +139,6 @@ jobs:
       - name: Setup gh workspace in container
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Checkout source
-        uses: actions/checkout@v4
-        with:
-          submodules: 'true'
-          ref: "master"
-          fetch-depth: "1"
-
       - name: Setup Environment Variables
         id: date
         run: |
@@ -182,6 +175,13 @@ jobs:
         with:
           path: ~/dl
           key: ${{ runner.os }}-dl-shared-v1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}
+
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          ref: "master"
+          fetch-depth: "1"
 
       - name: Build firmware
         if: ${{ github.event.inputs.debug_enabled != 'true' }}
@@ -315,12 +315,14 @@ jobs:
             echo "No previous release found. Skipping release notes generation."
             echo "RELEASE_NOTES_FILE=$(pwd)/release_notes.md" >> $GITHUB_ENV
             exit 0
+          else
+            echo "Latest release so far is $LAST_RELEASE_TAG"
           fi
 
           COMMITS=$(gh api \
             -H "Accept: application/vnd.github.v3+json" \
             /repos/${{ github.repository }}/compare/$LAST_RELEASE_TAG...HEAD \
-            -q '.commits[].commit.message')
+            -q '.commits[] | "\(.sha[0:7]) \(.commit.message | gsub("\n"; " "))"')
 
           RELEASE_NOTES="### Commits since last release:\n"
 
