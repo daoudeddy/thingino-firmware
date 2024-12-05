@@ -39,7 +39,7 @@ env:
 
 jobs:
   buildroot:
-    name: ahc-3301y-ht1
+    name: hc-3301y-mt1
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -86,11 +86,11 @@ jobs:
         if: always()
         with:
           path: ~/.ccache
-          key: ${{ runner.os }}-ccache-ahc-3301y-ht1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}-${{ github.run_id }}
+          key: ${{ runner.os }}-ccache-mhc-3301y-mt1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}-${{ github.run_id }}
           restore-keys: |
-            ${{ runner.os }}-ccache-ahc-3301y-ht1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}
-            ${{ runner.os }}-ccache-ahc-3301y-ht1-${{ env.CURRENT_YEAR }}-week-
-            ${{ runner.os }}-ccache-ahc-3301y-ht1-
+            ${{ runner.os }}-ccache-hc-3301y-mt1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}
+            ${{ runner.os }}-ccache-hc-3301y-mt1-${{ env.CURRENT_YEAR }}-week-
+            ${{ runner.os }}-ccache-hc-3301y-mt1-
             ${{ runner.os }}-ccache-
             ${{ runner.os }}-ccache-shared-v1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}
 
@@ -110,5 +110,5 @@ jobs:
       - name: Upload update firmware artifact
         uses: actions/upload-artifact@v4
         with:
-          name: thingino-ahc-3301y-ht1
-          path: ~/output/ahc-3301y-ht1/images/
+          name: thingino-hc-3301y-mt1
+          path: ~/output/hc-3301y-mt1/images/
