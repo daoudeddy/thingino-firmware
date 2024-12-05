@@ -103,7 +103,7 @@ jobs:
 
       - name: Build firmware
         run: |
-          BOARD=ahc-3301y-ht1 make fast
+          BOARD=hc-3301y-mt1 make fast
           TIME=$(date -d @${SECONDS} +%M:%S)
           echo "TIME=${TIME}" >> ${GITHUB_ENV}
 
