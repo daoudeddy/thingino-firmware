@@ -28,7 +28,7 @@ env:
 
 jobs:
   notify-begin:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       start_time: ${{ steps.set_output.outputs.time }}
     steps:
@@ -50,7 +50,7 @@ jobs:
   build-caches:
     name: ${{ matrix.caches-version }}
     needs: notify-begin
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     defaults:
       run:
         shell: bash
@@ -106,14 +106,14 @@ jobs:
 
       - name: Generate buildroot cache
         run: |
-          BOARD=${{ matrix.caches-version }} make
+          BOARD=${{ matrix.caches-version }} make fast
 
       - name: Save Buildroot ccache
         uses: actions/cache/save@v4
         if: always()
         with:
           path: ~/.ccache
-          key: ${{ runner.os }}-ccache-shared-v1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}
+          key: ${{ runner.os }}-ccache-shared-v1-${{ env.CURRENT_YEAR }}-week-${{ env.WEEK_NUMBER }}-${{ github.run_id }}
 
       - name: Send completion notification
         if: ${{ github.event_name != 'pull_request' && env.INGTC && github.event.inputs.tg_disabled == 'false' }}
@@ -144,7 +144,7 @@ jobs:
 
   notify-completion:
     needs: [build-caches, notify-begin]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: always()
     steps:
       - name: Send completion summary
